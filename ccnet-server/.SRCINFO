@@ -1,0 +1,23 @@
+pkgbase = ccnet-server
+	pkgdesc = Internal communication framework and user/group management for seafile server
+	pkgver = 7.1.4
+	pkgrel = 1
+	url = https://github.com/haiwen/ccnet-server
+	arch = i686
+	arch = x86_64
+	arch = armv7h
+	arch = armv6h
+	arch = aarch64
+	license = GPL2
+	makedepends = vala
+	depends = libevent
+	depends = libsearpc
+	depends = libldap
+	depends = mariadb-libs
+	provides = ccnet
+	conflicts = ccnet
+	source = ccnet-server-v7.1.4-server.tar.gz::https://github.com/haiwen/ccnet-server/archive/v7.1.4-server.tar.gz
+	sha256sums = b46508a686e7fe8eb9e1515e5384c7d9aca25cf596ef4b8383646e587f1032eb
+
+pkgname = ccnet-server
+
