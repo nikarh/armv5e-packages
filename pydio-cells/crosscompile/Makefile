@@ -17,7 +17,7 @@ src: src.tar.gz
 	rm -rf src
 	mkdir -p src/src/github.com/pydio
 	tar -zxf src.tar.gz && mv cells-$(VERSION) src/src/github.com/pydio/cells
-	patch -i $(CURDIR)/armv5.patch -d src/src/github.com/pydio/cells -p1
+	patch -i $(CURDIR)/armv5-$(VERSION).patch -d src/src/github.com/pydio/cells -p1
 
 src.tar.gz:
 	curl -L https://github.com/pydio/cells/archive/$(PREFIX)$(VERSION).tar.gz --output src.tar.gz
