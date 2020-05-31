@@ -1,0 +1,95 @@
+diff --git a/Makefile b/Makefile
+index 9bfbd8f58..0062ec721 100644
+diff --git a/vendor/github.com/blevesearch/bleve/index/scorch/scorch.go b/vendor/github.com/blevesearch/bleve/index/scorch/scorch.go
+index 3f3d8bffc..229892808 100644
+--- a/vendor/github.com/blevesearch/bleve/index/scorch/scorch.go
++++ b/vendor/github.com/blevesearch/bleve/index/scorch/scorch.go
+@@ -41,12 +41,17 @@ const Version uint8 = 2
+ var ErrClosed = fmt.Errorf("scorch closed")
+ 
+ type Scorch struct {
++	nextSegmentID uint64
++	nextSnapshotEpoch    uint64
++	stats         Stats
++	iStats internalStats
++	pauseCount uint64
++	eligibleForRemoval   []uint64        // Index snapshot epochs that are safe to GC.
++
+ 	readOnly      bool
+ 	version       uint8
+ 	config        map[string]interface{}
+ 	analysisQueue *index.AnalysisQueue
+-	stats         Stats
+-	nextSegmentID uint64
+ 	path          string
+ 
+ 	unsafeBatch bool
+@@ -55,8 +60,6 @@ type Scorch struct {
+ 	root                 *IndexSnapshot // holds 1 ref-count on the root
+ 	rootPersisted        []chan error   // closed when root is persisted
+ 	persistedCallbacks   []index.BatchCallback
+-	nextSnapshotEpoch    uint64
+-	eligibleForRemoval   []uint64        // Index snapshot epochs that are safe to GC.
+ 	ineligibleForRemoval map[string]bool // Filenames that should not be GC'ed yet.
+ 
+ 	numSnapshotsToKeep int
+@@ -73,11 +76,8 @@ type Scorch struct {
+ 	onEvent      func(event Event)
+ 	onAsyncError func(err error)
+ 
+-	iStats internalStats
+-
+ 	pauseLock sync.RWMutex
+ 
+-	pauseCount uint64
+ }
+ 
+ type internalStats struct {
+diff --git a/vendor/github.com/blevesearch/bleve/index/scorch/snapshot_segment.go b/vendor/github.com/blevesearch/bleve/index/scorch/snapshot_segment.go
+index f3a2c56a9..e231b208d 100644
+--- a/vendor/github.com/blevesearch/bleve/index/scorch/snapshot_segment.go
++++ b/vendor/github.com/blevesearch/bleve/index/scorch/snapshot_segment.go
+@@ -113,11 +113,11 @@ func (s *SegmentSnapshot) Size() (rv int) {
+ }
+ 
+ type cachedFieldDocs struct {
++	size    uint64
+ 	m       sync.Mutex
+ 	readyCh chan struct{}     // closed when the cachedFieldDocs.docs is ready to be used.
+ 	err     error             // Non-nil if there was an error when preparing this cachedFieldDocs.
+ 	docs    map[uint64][]byte // Keyed by localDocNum, value is a list of terms delimited by 0xFF.
+-	size    uint64
+ }
+ 
+ func (cfd *cachedFieldDocs) Size() int {
+diff --git a/vendor/github.com/micro/go-plugins/server/grpc/util.go b/vendor/github.com/micro/go-plugins/server/grpc/util.go
+index c49a87346..583b8519a 100644
+--- a/vendor/github.com/micro/go-plugins/server/grpc/util.go
++++ b/vendor/github.com/micro/go-plugins/server/grpc/util.go
+@@ -136,7 +136,7 @@ func encode(c grpc.Codec, msg interface{}, cp grpc.Compressor, cbuf *bytes.Buffe
+ 		}
+ 	}
+ 
+-	if len(b) > math.MaxUint32 {
++	if len(b) > math.MaxInt32 {
+ 		return nil, nil, Errorf(codes.ResourceExhausted, "grpc: message too large (%d bytes)", len(b))
+ 	}
+ 
+diff --git a/vendor/github.com/yvasiyarov/php_session_decoder/php_serialize/unserialize.go b/vendor/github.com/yvasiyarov/php_session_decoder/php_serialize/unserialize.go
+index d527b307b..931aff466 100644
+--- a/vendor/github.com/yvasiyarov/php_session_decoder/php_serialize/unserialize.go
++++ b/vendor/github.com/yvasiyarov/php_session_decoder/php_serialize/unserialize.go
+@@ -4,11 +4,12 @@ import (
+ 	"bytes"
+ 	"fmt"
+ 	"log"
++	"math"
+ 	"strconv"
+ 	"strings"
+ )
+ 
+-const UNSERIALIZABLE_OBJECT_MAX_LEN = 10 * 1024 * 1024 * 1024
++const UNSERIALIZABLE_OBJECT_MAX_LEN = math.MaxInt32
+ 
+ func UnSerialize(s string) (PhpValue, error) {
+ 	decoder := NewUnSerializer(s)
