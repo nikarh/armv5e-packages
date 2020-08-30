@@ -1,5 +1,5 @@
 pkgname=filebrowser-bin
-pkgver=2.4.0
+pkgver=2.6.2
 pkgrel=1
 pkgdesc="Web File Manager which can be used as a middleware or standalone app."
 arch=('x86_64' 'arm')
@@ -9,12 +9,10 @@ provides=("filebrowser")
 conflicts=("filebrowser")
 
 source=('filebrowser@.service')
-source_x86_64=(linux-amd64-filebrowser-$pkgver.tar.gz::https://github.com/filebrowser/filebrowser/releases/download/v$pkgver/linux-amd64-filebrowser.tar.gz)
 source_arm=(linux-armv5-filebrowser-$pkgver.tar.gz::https://github.com/filebrowser/filebrowser/releases/download/v$pkgver/linux-armv5-filebrowser.tar.gz)
 
 sha256sums=('ed81a3df449601ef18c7e255bdace337530145a2981507e01b7c68fc008be1da')
-sha256sums_x86_64=('ae7014f94a03d5a07c896ec7e7cbc3caf88e92ffca9d18fc1b5f41ed406c5313')
-sha256sums_arm=('5e196445bda221090f52d63f1f8bb04f8b6f94606f58c8c86ec3a1d2f4da81c0')
+sha256sums_arm=('62fb7d9ce8c55faff638b4791d9a94c4a888cb3283349992d489f3902fb5cded')
 
 package() {
     install -Dm644 filebrowser@.service ${pkgdir}/usr/lib/systemd/system/filebrowser@.service

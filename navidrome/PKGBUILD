@@ -1,7 +1,7 @@
 
 pkgbase='navidrome-bin'
 pkgname=(navidrome-bin)
-pkgver='0.25.0'
+pkgver='0.31.0'
 pkgrel=1
 pkgdesc='Music Server and Streamer compatible with Subsonic/Airsonic'
 url='https://www.navidrome.org/'
@@ -12,11 +12,9 @@ conflicts=('navidrome')
 depends=('glibc' 'ffmpeg')
 
 source=('navidrome@.service')
-source_x86_64=('https://github.com/deluan/navidrome/releases/download/v0.25.0/navidrome_0.25.0_Linux_x86_64.tar.gz')
-source_arm=('https://github.com/deluan/navidrome/releases/download/v0.25.0/navidrome_0.25.0_Linux_armv5.tar.gz')
+source_arm=("https://github.com/deluan/navidrome/releases/download/v${pkgver}/navidrome_${pkgver}_Linux_armv5.tar.gz")
 md5sums=('0141bb2e67e181d4388d9e5c241cc71d')
-md5sums_x86_64=('1a292b58bbffb8a8089fbf9199da142d')
-md5sums_arm=('d44e0f024c9b2b58287e23c386f08152')
+md5sums_arm=('4e020f6633e52baed84ffa56ad764fec')
 
 package() {
   install -Dm644 "$srcdir/navidrome@.service" "$pkgdir/usr/lib/systemd/system/navidrome@.service"
